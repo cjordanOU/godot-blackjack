@@ -108,6 +108,29 @@ margin_right = 82.0
 margin_bottom = 40.0
 text = "Stand"
 
+[node name="Restart" type="MarginContainer" parent="GUI/HUD"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -42.0
+margin_top = -50.0
+margin_right = 42.0
+margin_bottom = -10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI/HUD/Restart"]
+margin_right = 84.0
+margin_bottom = 40.0
+
+[node name="playAgain" type="Button" parent="GUI/HUD/Restart/HBoxContainer"]
+margin_right = 83.0
+margin_bottom = 40.0
+text = "Play Again?"
+
 [node name="MarginContainer" type="MarginContainer" parent="GUI/HUD"]
 margin_right = 40.0
 margin_bottom = 40.0
@@ -143,3 +166,5 @@ __meta__ = {
 
 [connection signal="pressed" from="GUI/HUD/Controls/HBoxContainer/Hit" to="." method="_on_Hit_pressed"]
 [connection signal="pressed" from="GUI/HUD/Controls/HBoxContainer/Stand" to="." method="_on_Stand_pressed"]
+[connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_Hit_pressed"]
+[connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_playAgain_pressed"]

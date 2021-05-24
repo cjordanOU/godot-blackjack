@@ -4,8 +4,9 @@ extends Node2D
 # Declare member variables here. Examples:
 
 var rng = RandomNumberGenerator.new()
-var playerHand: int
-var dealerHand: int
+var playerHand: = 0
+var dealerHand: = 0
+var dealerShownHand = 0
 var playerCard1 = 0
 var playerCard2 = 0
 var playerCard3 = 0
@@ -18,27 +19,39 @@ var dealerCard1 = 0
 var dealerCard2 = 0
 var dealerCard3 = 0
 var dealerCard4 = 0
+var gameEnded = false
+
 
 onready var hudPlayer = $GUI/HUD/MarginContainer/Data/playerHand
 onready var hudDealer = $GUI/HUD/MarginContainer/Data/dealerHand
 onready var hit_or_stand = $GUI/HUD/Controls/HBoxContainer
+onready var restartGame = $GUI/HUD/Restart
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	playerHand = get_new_card()
-	dealerHand = get_new_card()
-	playerCard1 = playerHand
-	dealerCard1 = dealerHand
+	playerCard1 = get_new_card()
+	playerCard2 = get_new_card()
+	dealerCard1 = get_new_card()
+	dealerCard2 = get_new_card()
+	playerHand = playerCard1 + playerCard2
+	dealerHand = dealerCard1 + dealerCard2
+	dealerShownHand = dealerHand - dealerCard1
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	display_hud_data()
+	screenshot()
 
 
 func display_hud_data():
 	hudPlayer.text = "Your Hand: " + str(playerHand)
-	hudDealer.text = "Dealer Hand: " + str(dealerHand) + " + ?"
+	if dealerShownHand != dealerHand:
+		hudDealer.text = "Dealer Hand: " + str(dealerShownHand) + " + ?"
+	else:
+		hudDealer.text = "Dealer Hand: " + str(dealerShownHand)
+
 
 # Deals a new card
 func get_new_card():
@@ -54,39 +67,44 @@ func get_new_card():
 	
 	return card
 
+
 func play_dealer_hand():
 	if dealerHand < 17:
 		dealerHand = dealerHand + get_new_card()
 		# This can definitely be simplified
-		if dealerCard1 != 0:
-			if dealerCard2 == 0:
-				dealerCard2 = dealerHand - dealerCard1
-			else:
-				if dealerCard3 == 0:
-					dealerCard3 = dealerHand - dealerCard1 - dealerCard2
-				else:
-					dealerCard4 = dealerHand - dealerCard1 - dealerCard2 -dealerCard3
+		if dealerCard3 == 0:
+			dealerCard3 = dealerHand - dealerCard1 - dealerCard2
+			dealerShownHand = dealerHand - dealerCard1
+		else:
+			dealerCard4 = dealerHand - dealerCard1 - dealerCard2 - dealerCard3
+			dealerShownHand = dealerHand - dealerCard1
 	#print("dCard1: " + str(dealerCard1))
 	#print("dCard2: " + str(dealerCard2))
 	#print("dCard3: " + str(dealerCard3))
 	#print("dCard4: " + str(dealerCard4))
 	return dealerHand
 
-func determine_winner():	
+
+func determine_winner():
+	hit_or_stand.visible = false
+	dealerShownHand = dealerHand
 	if playerHand > 21:
 		print("You lose! You have gone bust!")
+		gameEnded = true
 	
-	if playerHand == dealerHand:
+	if playerHand == dealerHand and gameEnded == false:
 		print("Tie!")
 	
-	if dealerHand > 21 and playerHand <= 21:
+	if dealerHand > 21 and playerHand <= 21 and gameEnded == false:
 		print("You win! The dealer has gone bust!")
 	
-	if playerHand > dealerHand and playerHand <= 21:
+	if playerHand > dealerHand and playerHand <= 21 and gameEnded == false:
 		print("You win! You beat the dealer!")
 	
-	if playerHand < dealerHand and dealerHand <= 21:
+	if playerHand < dealerHand and dealerHand <= 21 and gameEnded == false:
 		print("You lose! The dealer beat you!")
+	
+	restartGame.visible = true
 
 
 func _on_Hit_pressed():
@@ -102,9 +120,20 @@ func _on_Hit_pressed():
 
 
 func _on_Stand_pressed():
-	hit_or_stand = not visible
 	while dealerHand < 17:
 		play_dealer_hand()
 	
 	determine_winner()
-	
+
+
+func _on_playAgain_pressed():
+	get_tree().reload_current_scene()
+	get_tree().paused = not get_tree().paused
+
+
+func screenshot():
+	if Input.is_action_pressed("ui_page_up"):
+		var sysTime = OS.get_unix_time()
+		var screenshot = get_viewport().get_texture().get_data()
+		screenshot.flip_y()
+		screenshot.save_png("res://Screenshots/screenshot-" + str(sysTime) + ".png")
