@@ -19,6 +19,10 @@ var dealerCard2 = 0
 var dealerCard3 = 0
 var dealerCard4 = 0
 
+onready var hudPlayer = $GUI/HUD/MarginContainer/Data/playerHand
+onready var hudDealer = $GUI/HUD/MarginContainer/Data/dealerHand
+onready var hit_or_stand = $GUI/HUD/Controls/HBoxContainer
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -33,8 +37,8 @@ func _process(delta):
 
 
 func display_hud_data():
-	$GUI/HUD/MarginContainer/Data/playerHand.text = "Your Hand: " + str(playerHand)
-	$GUI/HUD/MarginContainer/Data/dealerHand.text = "Dealer Hand: " + str(dealerHand) + " + ?"
+	hudPlayer.text = "Your Hand: " + str(playerHand)
+	hudDealer.text = "Dealer Hand: " + str(dealerHand) + " + ?"
 
 # Deals a new card
 func get_new_card():
@@ -62,10 +66,10 @@ func play_dealer_hand():
 					dealerCard3 = dealerHand - dealerCard1 - dealerCard2
 				else:
 					dealerCard4 = dealerHand - dealerCard1 - dealerCard2 -dealerCard3
-	print("dCard1: " + str(dealerCard1))
-	print("dCard2: " + str(dealerCard2))
-	print("dCard3: " + str(dealerCard3))
-	print("dCard4: " + str(dealerCard4))
+	#print("dCard1: " + str(dealerCard1))
+	#print("dCard2: " + str(dealerCard2))
+	#print("dCard3: " + str(dealerCard3))
+	#print("dCard4: " + str(dealerCard4))
 	return dealerHand
 
 func determine_winner():	
@@ -75,23 +79,32 @@ func determine_winner():
 	if playerHand == dealerHand:
 		print("Tie!")
 	
-	if dealerHand > 21:
+	if dealerHand > 21 and playerHand <= 21:
 		print("You win! The dealer has gone bust!")
 	
-	if playerHand > dealerHand:
+	if playerHand > dealerHand and playerHand <= 21:
 		print("You win! You beat the dealer!")
 	
-	if playerHand < dealerHand:
+	if playerHand < dealerHand and dealerHand <= 21:
 		print("You lose! The dealer beat you!")
 
 
 func _on_Hit_pressed():
 	playerHand = playerHand + get_new_card()
-	if playerHand >= 21 and dealerHand > 17:
+	if playerHand > 21:
 		determine_winner()
+	elif playerHand >= 21 and dealerHand > 17:
+		determine_winner()
+	
 	play_dealer_hand()
 	if dealerHand >= 21:
 		determine_winner()
 
+
 func _on_Stand_pressed():
-	pass # Replace with function body.
+	hit_or_stand = not visible
+	while dealerHand < 17:
+		play_dealer_hand()
+	
+	determine_winner()
+	
