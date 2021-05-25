@@ -20,7 +20,7 @@ var dealerCard2 = 0
 var dealerCard3 = 0
 var dealerCard4 = 0
 var gameEnded = false
-
+var currentCard = 2
 
 onready var hudPlayer = $GUI/HUD/MarginContainer/Data/playerHand
 onready var hudDealer = $GUI/HUD/MarginContainer/Data/dealerHand
@@ -28,6 +28,26 @@ onready var hit_or_stand = $GUI/HUD/Controls/HBoxContainer
 onready var restartGame = $GUI/HUD/Restart
 onready var GameEndBox = $GUI/HUD/GameEndScenario
 onready var hudWL = $GUI/HUD/GameEndScenario/Control/winOrLose
+
+onready var Card1 = $Cards/Card1
+onready var Card1Top = $Cards/Card1/NumberTop
+onready var Card1Btm = $Cards/Card1/NumberBottom
+
+onready var Card2 = $Cards/Card2
+onready var Card2Top = $Cards/Card2/NumberTop
+onready var Card2Btm = $Cards/Card2/NumberBottom
+
+onready var Card3 = $Cards/Card3
+onready var Card3Top = $Cards/Card3/NumberTop
+onready var Card3Btm = $Cards/Card3/NumberBottom
+
+onready var Card4 = $Cards/Card4
+onready var Card4Top = $Cards/Card4/NumberTop
+onready var Card4Btm = $Cards/Card4/NumberBottom
+
+onready var Card5 = $Cards/Card5
+onready var Card5Top = $Cards/Card5/NumberTop
+onready var Card5Btm = $Cards/Card5/NumberBottom
 
 
 # Called when the node enters the scene tree for the first time.
@@ -44,6 +64,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	display_hud_data()
+	display_card()
 	screenshot()
 
 
@@ -55,11 +76,40 @@ func display_hud_data():
 		hudDealer.text = "Dealer Hand: " + str(dealerShownHand)
 
 
+func display_card():
+	Card1Top.text = str(playerCard1)
+	Card1Btm.text = str(playerCard1)
+	
+	Card2Top.text = str(playerCard2)
+	Card2Btm.text = str(playerCard2)
+	
+	if playerCard3 != 0:
+		Card3.visible = true
+		Card3Top.text = str(playerCard3)
+		Card3Btm.text = str(playerCard3)
+	
+	if playerCard4 != 0:
+		Card4.visible = true
+		Card4Top.text = str(playerCard4)
+		Card4Btm.text = str(playerCard4)
+	
+	if playerCard5 != 0:
+		Card5.visible = true
+		Card5Top.text = str(playerCard5)
+		Card5Btm.text = str(playerCard5)
+
 # Deals a new card
 func get_new_card():
 	var card: int
+	var rngType: float
 	rng.randomize()
-	card = 1 + rng.randi_range(1, 13)
+	
+	# Modified RNG chances for better gameplay
+	rngType = rng.randf_range(0,1)
+	if rngType >.65:
+		card = rng.randi_range(1, 7)
+	else:
+		card = rng.randi_range(1, 13)
 	
 	# Ace card logic
 	if card == 1: return 11
@@ -89,7 +139,9 @@ func play_dealer_hand():
 
 func determine_winner():
 	hit_or_stand.visible = false
+	display_hud_data()
 	dealerShownHand = dealerHand
+	
 	GameEndBox.visible = true
 	if playerHand > 21:
 		hudWL.text = ("You lose! You have gone bust!")
@@ -115,7 +167,17 @@ func determine_winner():
 
 
 func _on_Hit_pressed():
-	playerHand = playerHand + get_new_card()
+	currentCard += 1
+	if currentCard == 3:
+		playerCard3 = get_new_card()
+		playerHand = playerHand + playerCard3
+	if currentCard == 4:
+		playerCard4 = get_new_card()
+		playerHand = playerHand + playerCard4
+	if currentCard == 5:
+		playerCard5 = get_new_card()
+		playerHand = playerHand + playerCard5
+	
 	if playerHand > 21:
 		determine_winner()
 	elif playerHand >= 21 and dealerHand > 17:

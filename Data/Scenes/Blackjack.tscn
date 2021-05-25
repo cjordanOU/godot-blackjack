@@ -1,60 +1,54 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Data/Scripts/Blackjack.gd" type="Script" id=1]
+[ext_resource path="res://Data/Sprites/BG_table.png" type="Texture" id=2]
+[ext_resource path="res://Data/Sprites/BG_smoke.png" type="Texture" id=3]
+[ext_resource path="res://Data/Sprites/card_spade.png" type="Texture" id=4]
+[ext_resource path="res://Data/Sprites/card_shadow.png" type="Texture" id=5]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
 
-uniform vec3 color = vec3(0.35, 0.48, 0.95);
-uniform int OCTAVES = 4;
+uniform sampler2D noise_img;
+uniform float speed = 0.1;
+uniform vec4 smoke_color : hint_color;
 
-float rand(vec2 coord){
-	return fract(sin(dot(coord, vec2(56, 78)) * 1000.0) * 1000.0);
-}
-
-float noise(vec2 coord){
-	vec2 i = floor(coord);
-	vec2 f = fract(coord);
-
-	// 4 corners of a rectangle surrounding our point
-	float a = rand(i);
-	float b = rand(i + vec2(1.0, 0.0));
-	float c = rand(i + vec2(0.0, 1.0));
-	float d = rand(i + vec2(1.0, 1.0));
-
-	vec2 cubic = f * f * (3.0 - 2.0 * f);
-
-	return mix(a, b, cubic.x) + (c - a) * cubic.y * (1.0 - cubic.x) + (d - b) * cubic.x * cubic.y;
-}
-
-float fbm(vec2 coord){
-	float value = 0.0;
-	float scale = 0.5;
-
-	for(int i = 0; i < OCTAVES; i++){
-		value += noise(coord) * scale;
-		coord *= 2.0;
-		scale *= 0.5;
-	}
-	return value;
-}
-
-void fragment() {
-	vec2 coord = UV * 20.0;
-
-	vec2 motion = vec2( fbm(coord + vec2(TIME * -0.5, TIME * 0.5)) );
-
-	float final = fbm(coord + motion);
-
-	COLOR = vec4(color, final * 0.5);
+void fragment(){
+	
+	vec2 uv1 = vec2(UV.x + TIME*speed, UV.y);
+	vec2 uv2 = vec2(UV.x - TIME*speed, UV.y);
+	vec2 uv3 = vec2(UV.x, UV.y + TIME*speed);
+	
+	
+	float noise_r = texture( noise_img, uv1 ).r;
+	float noise_g = texture( noise_img, uv2 ).g;
+	float noise_b = texture( noise_img, uv3 ).b;
+	
+	vec3 new_color = vec3(noise_r, noise_g, noise_b);
+	
+	float new_alpha = noise_r * noise_g * noise_b;
+	
+	COLOR.rgb = smoke_color.rgb;//texture(TEXTURE, UV).rgb;
+	COLOR.a = clamp(new_alpha * 5.0 * texture(TEXTURE, UV).a, 0.0, 1.0);
 }"
+
+[sub_resource type="OpenSimplexNoise" id=4]
+octaves = 4
+
+[sub_resource type="NoiseTexture" id=5]
+width = 128
+height = 128
+seamless = true
+noise = SubResource( 4 )
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
-shader_param/color = Vector3( 0.35, 0.48, 0.95 )
-shader_param/OCTAVES = 4
+shader_param/speed = 0.1
+shader_param/smoke_color = Color( 0.435294, 0.34902, 0.286275, 1 )
+shader_param/noise_img = SubResource( 5 )
 
-[sub_resource type="GradientTexture" id=3]
+[sub_resource type="OccluderPolygon2D" id=6]
+polygon = PoolVector2Array( 66, 87, 67, 83, 69, 81, 133, 81, 136, 83, 137, 87, 137, 179, 135, 182, 132, 183, 71, 183, 67, 181, 66, 178 )
 
 [node name="Blackjack" type="Node2D"]
 script = ExtResource( 1 )
@@ -64,12 +58,214 @@ position = Vector2( 240, 135 )
 
 [node name="Background" type="Node2D" parent="."]
 
+[node name="Table" type="Sprite" parent="Background"]
+position = Vector2( 240, 135 )
+texture = ExtResource( 2 )
+
 [node name="Smoke" type="Sprite" parent="Background"]
-visible = false
 material = SubResource( 2 )
-position = Vector2( 278, 135 )
-scale = Vector2( 0.271484, 270 )
-texture = SubResource( 3 )
+position = Vector2( 174, 127 )
+scale = Vector2( 8.75122, 5.74023 )
+texture = ExtResource( 3 )
+
+[node name="Light2D" type="Light2D" parent="Background"]
+position = Vector2( 240, 1 )
+scale = Vector2( 8.75122, 5.74023 )
+texture = ExtResource( 3 )
+color = Color( 0.529412, 0.509804, 0.509804, 0.196078 )
+energy = 1.65
+shadow_enabled = true
+
+[node name="Cards" type="Node2D" parent="."]
+position = Vector2( -13, 0 )
+
+[node name="Card1" type="Node2D" parent="Cards"]
+position = Vector2( -27, 7 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card1"]
+occluder = SubResource( 6 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card1"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card1"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card1"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card1"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Card2" type="Node2D" parent="Cards"]
+position = Vector2( 62, 7 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card2"]
+occluder = SubResource( 6 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card2"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card2"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card2"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card2"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Card3" type="Node2D" parent="Cards"]
+visible = false
+position = Vector2( 152, 7 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card3"]
+occluder = SubResource( 6 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card3"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card3"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card3"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card3"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Card4" type="Node2D" parent="Cards"]
+visible = false
+position = Vector2( 242, 7 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card4"]
+occluder = SubResource( 6 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card4"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card4"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card4"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card4"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Card5" type="Node2D" parent="Cards"]
+visible = false
+position = Vector2( 331, 7 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card5"]
+occluder = SubResource( 6 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card5"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card5"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card5"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card5"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="GUI" type="CanvasLayer" parent="."]
 
@@ -153,17 +349,6 @@ __meta__ = {
 margin_right = 480.0
 margin_bottom = 270.0
 
-[node name="winOrLose" type="Label" parent="GUI/HUD/GameEndScenario/Control"]
-margin_left = 104.0
-margin_top = 102.0
-margin_right = 376.0
-margin_bottom = 169.0
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="BG" type="ColorRect" parent="GUI/HUD/GameEndScenario/Control"]
 anchor_left = 0.5
 anchor_top = 0.5
@@ -173,7 +358,18 @@ margin_left = -136.0
 margin_top = -33.5
 margin_right = 136.0
 margin_bottom = 33.5
-color = Color( 0, 0, 0, 0.215686 )
+color = Color( 0, 0, 0, 0.607843 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="winOrLose" type="Label" parent="GUI/HUD/GameEndScenario/Control"]
+margin_left = 104.0
+margin_top = 102.0
+margin_right = 376.0
+margin_bottom = 169.0
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
