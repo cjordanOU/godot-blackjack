@@ -26,6 +26,8 @@ onready var hudPlayer = $GUI/HUD/MarginContainer/Data/playerHand
 onready var hudDealer = $GUI/HUD/MarginContainer/Data/dealerHand
 onready var hit_or_stand = $GUI/HUD/Controls/HBoxContainer
 onready var restartGame = $GUI/HUD/Restart
+onready var GameEndBox = $GUI/HUD/GameEndScenario
+onready var hudWL = $GUI/HUD/GameEndScenario/Control/winOrLose
 
 
 # Called when the node enters the scene tree for the first time.
@@ -88,21 +90,26 @@ func play_dealer_hand():
 func determine_winner():
 	hit_or_stand.visible = false
 	dealerShownHand = dealerHand
+	GameEndBox.visible = true
 	if playerHand > 21:
-		print("You lose! You have gone bust!")
+		hudWL.text = ("You lose! You have gone bust!")
 		gameEnded = true
 	
 	if playerHand == dealerHand and gameEnded == false:
-		print("Tie!")
+		hudWL.text = ("Tie!")
+		gameEnded = true
 	
 	if dealerHand > 21 and playerHand <= 21 and gameEnded == false:
-		print("You win! The dealer has gone bust!")
+		hudWL.text = ("You win! The dealer has gone bust!")
+		gameEnded = true
 	
 	if playerHand > dealerHand and playerHand <= 21 and gameEnded == false:
-		print("You win! You beat the dealer!")
+		hudWL.text = ("You win! You beat the dealer!")
+		gameEnded = true
 	
 	if playerHand < dealerHand and dealerHand <= 21 and gameEnded == false:
-		print("You lose! The dealer beat you!")
+		hudWL.text = ("You lose! The dealer beat you!")
+		gameEnded = true
 	
 	restartGame.visible = true
 
