@@ -1,7 +1,7 @@
 extends Node2D
 
 
-# Declare member variables here. Examples:
+# Declaring Variables
 
 var rng = RandomNumberGenerator.new()
 var playerHand: = 0
@@ -12,15 +12,28 @@ var playerCard2 = 0
 var playerCard3 = 0
 var playerCard4 = 0
 var playerCard5 = 0
+var playerCard6 = 0
+var playerCard7 = 0
+var playerCard8 = 0
+var playerCard9 = 0
 var dealerCard1 = 0
 var dealerCard2 = 0
 var dealerCard3 = 0
 var dealerCard4 = 0
+var dealerCard5 = 0
+var dealerCard6 = 0
+var dealerCard7 = 0
 var currentCard = 2 # What card the player is currently on
 var gameEnded = false
 var playerVictory = false
 var playerHasAce = false
 var dealerHasAce = false
+var playerHas2Aces = false
+var dealerHas2Aces = false
+var playerHas3Aces = false
+var dealerHas3Aces = false
+var playerHas4Aces = false
+var dealerHas4Aces = false
 
 
 onready var hudPlayer = $GUI/HUD/MarginContainer/Data/playerHand

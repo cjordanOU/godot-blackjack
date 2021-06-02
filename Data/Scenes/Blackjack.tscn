@@ -267,6 +267,158 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Card6" type="Node2D" parent="Cards"]
+visible = false
+position = Vector2( 19, 32 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card6"]
+occluder = SubResource( 5 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card6"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card6"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card6"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card6"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Card7" type="Node2D" parent="Cards"]
+visible = false
+position = Vector2( 109, 32 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card7"]
+occluder = SubResource( 5 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card7"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card7"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card7"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card7"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Card8" type="Node2D" parent="Cards"]
+visible = false
+position = Vector2( 199, 32 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card8"]
+occluder = SubResource( 5 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card8"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card8"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card8"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card8"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Card9" type="Node2D" parent="Cards"]
+visible = false
+position = Vector2( 288, 33 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Cards/Card9"]
+occluder = SubResource( 5 )
+
+[node name="Shadow" type="Sprite" parent="Cards/Card9"]
+position = Vector2( 100, 136 )
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="Cards/Card9"]
+position = Vector2( 101, 132 )
+texture = ExtResource( 4 )
+
+[node name="NumberTop" type="Label" parent="Cards/Card9"]
+margin_left = 68.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 98.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NumberBottom" type="Label" parent="Cards/Card9"]
+margin_left = 94.0
+margin_top = 167.0
+margin_right = 134.0
+margin_bottom = 181.0
+custom_colors/font_color = Color( 0.152941, 0.0705882, 0.0470588, 1 )
+text = "1"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="GUI" type="CanvasLayer" parent="."]
 
 [node name="HUD" type="Control" parent="GUI"]
@@ -399,5 +551,5 @@ text = "Play Again?"
 
 [connection signal="pressed" from="GUI/HUD/Controls/HBoxContainer/Hit" to="." method="_on_Hit_pressed"]
 [connection signal="pressed" from="GUI/HUD/Controls/HBoxContainer/Stand" to="." method="_on_Stand_pressed"]
-[connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_Hit_pressed"]
 [connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_playAgain_pressed"]
+[connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_Hit_pressed"]
