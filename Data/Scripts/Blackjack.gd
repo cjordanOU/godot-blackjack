@@ -4,7 +4,6 @@ extends Node2D
 # Declaring Variables
 
 var rng = RandomNumberGenerator.new()
-export var buyInAmount = 100
 var suits = ['Clubs','Diamonds','Hearts', 'Spades']
 var cardValues = {"A": 11, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, "J": 10, "Q": 10, "K": 10 }
 
@@ -19,8 +18,10 @@ var dealerCard = [] # Array that stores what value the dealers cards have
 var playerHand: = 0
 var dealerHand: = 0
 var dealerShownHand = 0
-export var playerChips = 100
 var currentCard = 2
+
+export var playerChips = 200
+export var buyInAmount = 100
 
 var roundEnded = false
 var playerVictory = false
@@ -55,6 +56,7 @@ onready var Card5Top = $Cards/Card5/NumberTop
 onready var Card5Btm = $Cards/Card5/NumberBottom
 
 
+# ------ ------ ------ ------ Functions ------ ------ ------ ------
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	playerCard.append(get_new_card())
@@ -82,7 +84,7 @@ func get_new_card():
 	# Modified RNG chances for better gameplay
 	rngType = rng.randf_range(0,1)
 	if rngType >.65:
-		card = rng.randi_range(1, 7)
+		card = rng.randi_range(2, 7) 
 	else:
 		card = rng.randi_range(1, 13)
 	
@@ -97,7 +99,7 @@ func get_new_card():
 	
 	return card
 
-
+# Checks to see if there is a natural at the start (immediate blackjack)
 func check_for_natural():
 	if cardValues.get(playerCard[0]) == 11 and cardValues.get(playerCard[1]) == 10 or cardValues.get(playerCard[0]) == 10 and cardValues.get(playerCard[1]) == 11:
 		if dealerHand != 21:
@@ -118,7 +120,7 @@ func check_for_natural():
 			hudWL.text = ("Tie!")
 			roundEnded = true
 
-
+# Displays/updates HUD data
 func display_hud_data():
 	hudPlayer.text = "Your Hand: " + str(playerHand)
 	if dealerShownHand != dealerHand:
@@ -126,7 +128,7 @@ func display_hud_data():
 	else:
 		hudDealer.text = "Dealer Hand: " + str(dealerShownHand)
 
-
+# Displays card values on cards
 func display_card():
 	Card1Top.text = str(playerCard[0])
 	Card1Btm.text = str(playerCard[0])
@@ -148,6 +150,26 @@ func display_card():
 		Card5.visible = true
 		Card5Top.text = str(playerCard[4])
 		Card5Btm.text = str(playerCard[4])
+	
+	if playerCard.size() == 6:
+		Card5.visible = true
+		Card5Top.text = str(playerCard[5])
+		Card5Btm.text = str(playerCard[5])
+	
+	if playerCard.size() == 7:
+		Card5.visible = true
+		Card5Top.text = str(playerCard[6])
+		Card5Btm.text = str(playerCard[6])
+	
+	if playerCard.size() == 8:
+		Card5.visible = true
+		Card5Top.text = str(playerCard[7])
+		Card5Btm.text = str(playerCard[7])
+	
+	if playerCard.size() == 9:
+		Card5.visible = true
+		Card5Top.text = str(playerCard[8])
+		Card5Btm.text = str(playerCard[8])
 
 
 func play_dealer_hand():
