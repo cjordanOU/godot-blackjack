@@ -4,36 +4,27 @@ extends Node2D
 # Declaring Variables
 
 var rng = RandomNumberGenerator.new()
+export var buyInAmount = 100
+var suits = ['Clubs','Diamonds','Hearts', 'Spades']
+var cardValues = {"A": 11, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, "J": 10, "Q": 10, "K": 10 }
+
+var clubsCardsRemaining = ["A", 2, 3, 4, 5, 6, 7, 8 , 9, 10, "J", "Q", "K"]
+var diamondsCardsRemaining = ["A", 2, 3, 4, 5, 6, 7, 8 , 9, 10, "J", "Q", "K"]
+var heartsCardsRemaining = ["A", 2, 3, 4, 5, 6, 7, 8 , 9, 10, "J", "Q", "K"]
+var spadesCardsRemaining = ["A", 2, 3, 4, 5, 6, 7, 8 , 9, 10, "J", "Q", "K"]
+
+var playerCard = [] # Array that stores what value the players cards have
+var dealerCard = [] # Array that stores what value the dealers cards have
+
 var playerHand: = 0
 var dealerHand: = 0
 var dealerShownHand = 0
-var playerCard1 = 0
-var playerCard2 = 0
-var playerCard3 = 0
-var playerCard4 = 0
-var playerCard5 = 0
-var playerCard6 = 0
-var playerCard7 = 0
-var playerCard8 = 0
-var playerCard9 = 0
-var dealerCard1 = 0
-var dealerCard2 = 0
-var dealerCard3 = 0
-var dealerCard4 = 0
-var dealerCard5 = 0
-var dealerCard6 = 0
-var dealerCard7 = 0
-var currentCard = 2 # What card the player is currently on
-var gameEnded = false
+export var playerChips = 100
+var currentCard = 2
+
+var roundEnded = false
 var playerVictory = false
-var playerHasAce = false
-var dealerHasAce = false
-var playerHas2Aces = false
-var dealerHas2Aces = false
-var playerHas3Aces = false
-var dealerHas3Aces = false
-var playerHas4Aces = false
-var dealerHas4Aces = false
+var playerTurn = true
 
 
 onready var hudPlayer = $GUI/HUD/MarginContainer/Data/playerHand
@@ -66,13 +57,13 @@ onready var Card5Btm = $Cards/Card5/NumberBottom
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	playerCard1 = get_new_card()
-	playerCard2 = get_new_card()
-	dealerCard1 = get_new_card()
-	dealerCard2 = get_new_card()
-	playerHand = playerCard1 + playerCard2
-	dealerHand = dealerCard1 + dealerCard2
-	dealerShownHand = dealerHand - dealerCard1
+	playerCard.append(get_new_card())
+	playerCard.append(get_new_card())
+	dealerCard.append(get_new_card())
+	dealerCard.append(get_new_card())
+	playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) # Matches card values with cards
+	dealerHand = cardValues.get(dealerCard[0]) + cardValues.get(dealerCard[1]) # Matches card values with cards
+	dealerShownHand = dealerHand - cardValues.get(dealerCard[0]) # Matches card values with cards
 	check_for_natural()
 
 
@@ -81,83 +72,6 @@ func _process(delta):
 	display_hud_data()
 	display_card()
 	screenshot()
-
-
-func check_for_natural():
-	if playerCard1 == 11 and playerCard2 == 10 or playerCard1 == 10 and playerCard2 == 11:
-		if dealerHand != 21:
-			hit_or_stand.visible = false
-			display_hud_data()
-			dealerShownHand = dealerHand
-			GameEndBox.visible = true
-			
-			hudWL.text = ("Blackjack! You win!")
-			gameEnded = true
-			playerVictory = true
-		else:
-			hit_or_stand.visible = false
-			display_hud_data()
-			dealerShownHand = dealerHand
-			GameEndBox.visible = true
-			
-			hudWL.text = ("Tie!")
-			gameEnded = true
-
-
-func display_hud_data():
-	hudPlayer.text = "Your Hand: " + str(playerHand)
-	if dealerShownHand != dealerHand:
-		hudDealer.text = "Dealer Hand: " + str(dealerShownHand) + " + ?"
-	else:
-		hudDealer.text = "Dealer Hand: " + str(dealerShownHand)
-
-
-func display_card():
-	if playerCard1 == 1 or playerCard1 == 11:
-		Card1Top.text = "A"
-		Card1Btm.text = "A"
-		playerHasAce = true
-	else:
-		Card1Top.text = str(playerCard1)
-		Card1Btm.text = str(playerCard1)
-	
-	if playerCard2 == 1 or playerCard2 == 11:
-		Card2Top.text = "A"
-		Card2Btm.text = "A"
-		playerHasAce = true
-	else:
-		Card2Top.text = str(playerCard2)
-		Card2Btm.text = str(playerCard2)
-	
-	if playerCard3 != 0:
-		Card3.visible = true
-		if playerCard3 == 1 or playerCard3 == 11:
-			Card3Top.text = "A"
-			Card3Btm.text = "A"
-			playerHasAce = true
-		else:
-			Card3Top.text = str(playerCard3)
-			Card3Btm.text = str(playerCard3)
-	
-	if playerCard4 != 0:
-		Card4.visible = true
-		if playerCard4 == 1 or playerCard4 == 11:
-			Card4Top.text = "A"
-			Card4Btm.text = "A"
-			playerHasAce = true
-		else:
-			Card4Top.text = str(playerCard4)
-			Card4Btm.text = str(playerCard4)
-	
-	if playerCard5 != 0:
-		Card5.visible = true
-		if playerCard5 == 1 or playerCard5 == 11:
-			Card5Top.text = "A"
-			Card5Btm.text = "A"
-			playerHasAce = true
-		else:
-			Card5Top.text = str(playerCard5)
-			Card5Btm.text = str(playerCard5)
 
 # Deals a new card
 func get_new_card():
@@ -173,28 +87,79 @@ func get_new_card():
 		card = rng.randi_range(1, 13)
 	
 	# Ace card logic
-	if card == 1: return 11
+	if card == 1: return "A"
 	
 	# Face card logic
-	if card >= 10: return 10
+	if card > 10:
+		if card == 11: return "J"
+		if card == 12: return "Q"
+		if card == 13: return "K"
 	
 	return card
+
+
+func check_for_natural():
+	if cardValues.get(playerCard[0]) == 11 and cardValues.get(playerCard[1]) == 10 or cardValues.get(playerCard[0]) == 10 and cardValues.get(playerCard[1]) == 11:
+		if dealerHand != 21:
+			hit_or_stand.visible = false
+			display_hud_data()
+			dealerShownHand = dealerHand
+			GameEndBox.visible = true
+			
+			hudWL.text = ("Blackjack! You win!")
+			roundEnded = true
+			playerVictory = true
+		else:
+			hit_or_stand.visible = false
+			display_hud_data()
+			dealerShownHand = dealerHand
+			GameEndBox.visible = true
+			
+			hudWL.text = ("Tie!")
+			roundEnded = true
+
+
+func display_hud_data():
+	hudPlayer.text = "Your Hand: " + str(playerHand)
+	if dealerShownHand != dealerHand:
+		hudDealer.text = "Dealer Hand: " + str(dealerShownHand) + " + ?"
+	else:
+		hudDealer.text = "Dealer Hand: " + str(dealerShownHand)
+
+
+func display_card():
+	Card1Top.text = str(playerCard[0])
+	Card1Btm.text = str(playerCard[0])
+	
+	Card2Top.text = str(playerCard[1])
+	Card2Btm.text = str(playerCard[1])
+	
+	if playerCard.size() == 3:
+		Card3.visible = true
+		Card3Top.text = str(playerCard[2])
+		Card3Btm.text = str(playerCard[2])
+	
+	if playerCard.size() == 4:
+		Card4.visible = true
+		Card4Top.text = str(playerCard[3])
+		Card4Btm.text = str(playerCard[3])
+	
+	if playerCard.size() == 5:
+		Card5.visible = true
+		Card5Top.text = str(playerCard[4])
+		Card5Btm.text = str(playerCard[4])
 
 
 func play_dealer_hand():
 	if dealerHand < 17:
 		dealerHand = dealerHand + get_new_card()
 		# This can definitely be simplified
-		if dealerCard3 == 0:
-			dealerCard3 = dealerHand - dealerCard1 - dealerCard2
-			dealerShownHand = dealerHand - dealerCard1
+		if dealerCard.size() == 3:
+			dealerCard[2] = dealerHand - cardValues.get(dealerCard[0]) - cardValues.get(dealerCard[1])
+			dealerShownHand = dealerHand - cardValues.get(dealerCard[0])
 		else:
-			dealerCard4 = dealerHand - dealerCard1 - dealerCard2 - dealerCard3
-			dealerShownHand = dealerHand - dealerCard1
-	#print("dCard1: " + str(dealerCard1))
-	#print("dCard2: " + str(dealerCard2))
-	#print("dCard3: " + str(dealerCard3))
-	#print("dCard4: " + str(dealerCard4))
+			dealerCard[3] = dealerHand - cardValues.get(dealerCard[0]) - cardValues.get(dealerCard[1]) - cardValues.get(dealerCard[2])
+			dealerShownHand = dealerHand - cardValues.get(dealerCard[0])
 	return dealerHand
 
 
@@ -206,25 +171,25 @@ func determine_winner():
 	GameEndBox.visible = true
 	if playerHand > 21:
 		hudWL.text = ("You lose! You have gone bust!")
-		gameEnded = true
+		roundEnded = true
 	
-	if playerHand == dealerHand and gameEnded == false:
+	if playerHand == dealerHand and roundEnded == false:
 		hudWL.text = ("Tie!")
-		gameEnded = true
+		roundEnded = true
 	
-	if dealerHand > 21 and playerHand <= 21 and gameEnded == false:
+	if dealerHand > 21 and playerHand <= 21 and roundEnded == false:
 		hudWL.text = ("You win! The dealer has gone bust!")
-		gameEnded = true
+		roundEnded = true
 		playerVictory = true
 	
-	if playerHand > dealerHand and playerHand <= 21 and gameEnded == false:
+	if playerHand > dealerHand and playerHand <= 21 and roundEnded == false:
 		hudWL.text = ("You win! You beat the dealer!")
-		gameEnded = true
+		roundEnded = true
 		playerVictory = true
 	
-	if playerHand < dealerHand and dealerHand <= 21 and gameEnded == false:
+	if playerHand < dealerHand and dealerHand <= 21 and roundEnded == false:
 		hudWL.text = ("You lose! The dealer beat you!")
-		gameEnded = true
+		roundEnded = true
 	
 	restartGame.visible = true
 
@@ -232,29 +197,29 @@ func determine_winner():
 func _on_Hit_pressed():
 	currentCard += 1
 	if currentCard == 3:
-		playerCard3 = get_new_card()
-		playerHand = playerHand + playerCard3
+		playerCard.append(get_new_card())
+		playerHand = playerHand + cardValues.get(playerCard[2])
 		# Ace Logic
-		if playerCard3 == 11:
+		if str(playerCard[2]) == "A":
 			if playerHand > 21:
-				playerCard3 = 1
-				playerHand = playerCard1 + playerCard2 + playerCard3
+				playerCard.insert(2, 1)
+				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2])
 	if currentCard == 4:
-		playerCard4 = get_new_card()
-		playerHand = playerHand + playerCard4
+		playerCard.append(get_new_card())
+		playerHand = playerHand + cardValues.get(playerCard[3])
 		# Ace Logic
-		if playerCard4 == 11:
+		if str(playerCard[3]) == "A":
 			if playerHand > 21:
-				playerCard4 = 1
-				playerHand = playerCard1 + playerCard2 + playerCard3 + playerCard4
+				playerCard.insert(3, 1)
+				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3])
 	if currentCard == 5:
-		playerCard5 = get_new_card()
-		playerHand = playerHand + playerCard5
+		playerCard.append(get_new_card())
+		playerHand = playerHand + playerCard[4]
 		# Ace Logic
-		if playerCard5 == 11:
+		if str(playerCard[4]) == "A":
 			if playerHand > 21:
-				playerCard5 = 1
-				playerHand = playerCard1 + playerCard2 + playerCard3 + playerCard4 + playerCard5
+				playerCard.insert(4, 1)
+				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4])
 	
 	if playerHand > 21:
 		determine_winner()

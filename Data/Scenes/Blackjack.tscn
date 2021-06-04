@@ -551,5 +551,5 @@ text = "Play Again?"
 
 [connection signal="pressed" from="GUI/HUD/Controls/HBoxContainer/Hit" to="." method="_on_Hit_pressed"]
 [connection signal="pressed" from="GUI/HUD/Controls/HBoxContainer/Stand" to="." method="_on_Stand_pressed"]
-[connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_playAgain_pressed"]
 [connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_Hit_pressed"]
+[connection signal="pressed" from="GUI/HUD/Restart/HBoxContainer/playAgain" to="." method="_on_playAgain_pressed"]
