@@ -55,6 +55,21 @@ onready var Card5 = $Cards/Card5
 onready var Card5Top = $Cards/Card5/NumberTop
 onready var Card5Btm = $Cards/Card5/NumberBottom
 
+onready var Card6 = $Cards/Card6
+onready var Card6Top = $Cards/Card6/NumberTop
+onready var Card6Btm = $Cards/Card6/NumberBottom
+
+onready var Card7 = $Cards/Card7
+onready var Card7Top = $Cards/Card7/NumberTop
+onready var Card7Btm = $Cards/Card7/NumberBottom
+
+onready var Card8 = $Cards/Card8
+onready var Card8Top = $Cards/Card8/NumberTop
+onready var Card8Btm = $Cards/Card8/NumberBottom
+
+onready var Card9 = $Cards/Card9
+onready var Card9Top = $Cards/Card9/NumberTop
+onready var Card9Btm = $Cards/Card9/NumberBottom
 
 # ------ ------ ------ ------ Functions ------ ------ ------ ------
 # Called when the node enters the scene tree for the first time.
@@ -152,24 +167,24 @@ func display_card():
 		Card5Btm.text = str(playerCard[4])
 	
 	if playerCard.size() == 6:
-		Card5.visible = true
-		Card5Top.text = str(playerCard[5])
-		Card5Btm.text = str(playerCard[5])
+		Card6.visible = true
+		Card6Top.text = str(playerCard[5])
+		Card6Btm.text = str(playerCard[5])
 	
 	if playerCard.size() == 7:
-		Card5.visible = true
-		Card5Top.text = str(playerCard[6])
-		Card5Btm.text = str(playerCard[6])
+		Card7.visible = true
+		Card7Top.text = str(playerCard[6])
+		Card7Btm.text = str(playerCard[6])
 	
 	if playerCard.size() == 8:
-		Card5.visible = true
-		Card5Top.text = str(playerCard[7])
-		Card5Btm.text = str(playerCard[7])
+		Card8.visible = true
+		Card8Top.text = str(playerCard[7])
+		Card8Btm.text = str(playerCard[7])
 	
 	if playerCard.size() == 9:
-		Card5.visible = true
-		Card5Top.text = str(playerCard[8])
-		Card5Btm.text = str(playerCard[8])
+		Card9.visible = true
+		Card9Top.text = str(playerCard[8])
+		Card9Btm.text = str(playerCard[8])
 
 
 func play_dealer_hand():
@@ -239,13 +254,53 @@ func _on_Hit_pressed():
 				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3])
 	if currentCard == 5:
 		playerCard.append(get_new_card())
-		playerHand = playerHand + playerCard[4]
+		playerHand = playerHand + cardValues.get(playerCard[4])
 		# Ace Logic
 		if str(playerCard[4]) == "A":
 			if playerHand > 21:
 				playerCard.remove(5)
 				playerCard.append(1)
 				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4])
+	if currentCard == 6:
+		playerCard.append(get_new_card())
+		playerHand = playerHand + cardValues.get(playerCard[5])
+		# Ace Logic
+		if str(playerCard[5]) == "A":
+			if playerHand > 21:
+				if playerHand > 21:
+					playerCard.remove(6)
+					playerCard.append(1)
+					playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4]) + cardValues.get(playerCard[5])
+	if currentCard == 7:
+		playerCard.append(get_new_card())
+		playerHand = playerHand + cardValues.get(playerCard[6])
+		# Ace Logic
+		if str(playerCard[6]) == "A":
+			if playerHand > 21:
+				if playerHand > 21:
+					playerCard.remove(7)
+					playerCard.append(1)
+					playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4]) + cardValues.get(playerCard[5]) + cardValues.get(playerCard[6])
+	if currentCard == 8:
+		playerCard.append(get_new_card())
+		playerHand = playerHand + cardValues.get(playerCard[7])
+		# Ace Logic
+		if str(playerCard[7]) == "A":
+			if playerHand > 21:
+				if playerHand > 21:
+					playerCard.remove(8)
+					playerCard.append(1)
+					playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4]) + cardValues.get(playerCard[5]) + cardValues.get(playerCard[6]) + cardValues.get(playerCard[7])
+	if currentCard == 9:
+		playerCard.append(get_new_card())
+		playerHand = playerHand + cardValues.get(playerCard[8])
+		# Ace Logic
+		if str(playerCard[8]) == "A":
+			if playerHand > 21:
+				if playerHand > 21:
+					playerCard.remove(9)
+					playerCard.append(1)
+					playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4]) + cardValues.get(playerCard[5]) + cardValues.get(playerCard[6]) + cardValues.get(playerCard[7]) + cardValues.get(playerCard[8])
 	
 	if playerHand > 21:
 		determine_winner()
