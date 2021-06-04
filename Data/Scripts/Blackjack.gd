@@ -152,7 +152,8 @@ func display_card():
 
 func play_dealer_hand():
 	if dealerHand < 17:
-		dealerHand = dealerHand + get_new_card()
+		dealerCard.append(get_new_card())
+		dealerHand = dealerHand + cardValues.get(dealerCard.back())
 		# This can definitely be simplified
 		if dealerCard.size() == 3:
 			dealerCard[2] = dealerHand - cardValues.get(dealerCard[0]) - cardValues.get(dealerCard[1])
@@ -202,7 +203,8 @@ func _on_Hit_pressed():
 		# Ace Logic
 		if str(playerCard[2]) == "A":
 			if playerHand > 21:
-				playerCard.insert(2, 1)
+				playerCard.remove(3)
+				playerCard.append(1)
 				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2])
 	if currentCard == 4:
 		playerCard.append(get_new_card())
@@ -210,7 +212,8 @@ func _on_Hit_pressed():
 		# Ace Logic
 		if str(playerCard[3]) == "A":
 			if playerHand > 21:
-				playerCard.insert(3, 1)
+				playerCard.remove(4)
+				playerCard.append(1)
 				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3])
 	if currentCard == 5:
 		playerCard.append(get_new_card())
@@ -218,7 +221,8 @@ func _on_Hit_pressed():
 		# Ace Logic
 		if str(playerCard[4]) == "A":
 			if playerHand > 21:
-				playerCard.insert(4, 1)
+				playerCard.remove(5)
+				playerCard.append(1)
 				playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4])
 	
 	if playerHand > 21:
