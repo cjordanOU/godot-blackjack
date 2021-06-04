@@ -186,7 +186,7 @@ func display_card():
 		Card9Top.text = str(playerCard[8])
 		Card9Btm.text = str(playerCard[8])
 
-
+# Logic for dealer playing hand
 func play_dealer_hand():
 	if dealerHand < 17:
 		dealerCard.append(get_new_card())
@@ -200,7 +200,7 @@ func play_dealer_hand():
 			dealerShownHand = dealerHand - cardValues.get(dealerCard[0])
 	return dealerHand
 
-
+# Determines who wins the round
 func determine_winner():
 	hit_or_stand.visible = false
 	display_hud_data()
@@ -231,7 +231,7 @@ func determine_winner():
 	
 	restartGame.visible = true
 
-
+# When player presses hit button
 func _on_Hit_pressed():
 	currentCard += 1
 	if currentCard == 3:
@@ -302,28 +302,31 @@ func _on_Hit_pressed():
 					playerCard.append(1)
 					playerHand = cardValues.get(playerCard[0]) + cardValues.get(playerCard[1]) + cardValues.get(playerCard[2]) + cardValues.get(playerCard[3]) + cardValues.get(playerCard[4]) + cardValues.get(playerCard[5]) + cardValues.get(playerCard[6]) + cardValues.get(playerCard[7]) + cardValues.get(playerCard[8])
 	
+	aceLogicCheck()
+	
 	if playerHand > 21:
 		determine_winner()
 	elif playerHand >= 21 and dealerHand > 17:
 		determine_winner()
-	
-	#play_dealer_hand()
-	#if dealerHand >= 21:
-	#	determine_winner()
 
 
+func aceLogicCheck():
+	if playerCard.has("A") and playerHand > 21:
+		print("This function should make it so having an ace works properly")
+
+# When player presses stand button
 func _on_Stand_pressed():
 	while dealerHand < 17:
 		play_dealer_hand()
 	
 	determine_winner()
 
-
+# When player presses play again button
 func _on_playAgain_pressed():
 	get_tree().reload_current_scene()
 	get_tree().paused = not get_tree().paused
 
-
+# Screenshot Functionality
 func screenshot():
 	if Input.is_action_pressed("ui_page_up"):
 		var sysTime = OS.get_unix_time()
